@@ -3,6 +3,7 @@ package com.learnreactivespring.learnreactivespring.fluxandmonoplayground;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.util.BsonUtils;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 public class FluxAndMonoTest {
 
@@ -27,9 +28,68 @@ public class FluxAndMonoTest {
         .subscribe(System.out::println,
             (e) -> System.err.println("Exception is " + e),
             () -> System.out.println("Completed"));
-
-
-
   }
 
+
+  @Test
+  public void fluxTestElementsWithoutError() {
+    Flux<String> stringFlux = Flux.just("Spring", "Spring Boot", "Reactive Spring")
+        .log();
+
+    StepVerifier.create(stringFlux)
+      .expectNext("Spring")
+      .expectNext("Spring Boot")
+      .expectNext("Reactive Spring")
+      .verifyComplete();
+    // Without verifyComplete(), then a proper connection to stringFlux isn't made. In
+    // other words, verifyComplete() is what starts the flow of elements from stringFlux.
+  }
+
+
+  @Test
+  public void fluxTestElementsWithError() {
+    Flux<String> stringFlux = Flux.just("Spring", "Spring Boot", "Reactive Spring")
+        .concatWith(Flux.error(new RuntimeException("Exception Occurred")))
+        .log();
+
+    StepVerifier.create(stringFlux)
+        .expectNext("Spring")
+        .expectNext("Spring Boot")
+        .expectNext("Reactive Spring")
+        //.expectError(RuntimeException.class)
+        .expectErrorMessage("Exception Occurred")
+        .verify();
+
+    // Like verifyComplete(), verify() begins the flow of elements from stringFlux to
+    // subscriber defined within the StepVerifier. I think you want to use verify() in
+    // cases where the StepVerifier doesn't complete successfully?
+  }
+
+
+  @Test
+  public void fluxTestElementsWithErrorAltSyntax() {
+    Flux<String> stringFlux = Flux.just("Spring", "Spring Boot", "Reactive Spring")
+        .concatWith(Flux.error(new RuntimeException("Exception Occurred")))
+        .log();
+
+    // Instead of writing expectNext() for each element, you can write
+    // all the elements inside a single call.
+    StepVerifier.create(stringFlux)
+        .expectNext("Spring", "Spring Boot", "Reactive Spring")
+        .expectErrorMessage("Exception Occurred")
+        .verify();
+  }
+
+
+  @Test
+  public void fluxTestElementsCountWithError() {
+    Flux<String> stringFlux = Flux.just("Spring", "Spring Boot", "Reactive Spring")
+        .concatWith(Flux.error(new RuntimeException("Exception Occurred")))
+        .log();
+
+    StepVerifier.create(stringFlux)
+        .expectNextCount(3)
+        .expectErrorMessage("Exception Occurred")
+        .verify();
+  }
 }
