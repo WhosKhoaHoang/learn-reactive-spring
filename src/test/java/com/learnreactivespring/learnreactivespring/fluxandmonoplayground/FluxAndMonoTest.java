@@ -3,6 +3,7 @@ package com.learnreactivespring.learnreactivespring.fluxandmonoplayground;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.util.BsonUtils;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 public class FluxAndMonoTest {
@@ -17,6 +18,8 @@ public class FluxAndMonoTest {
         //.concatWith(Flux.error(new RuntimeException("Exception Occurred")))
         //.concatWith(Flux.just("After Error"))
         .log();
+    // log() ^here is useful for seeing all of the events flowing between a Flux
+    // and its subscriber
 
     // . Elements from stringFlux will be passed to the subscribe method one-by-one.
     //   Based on how Flux works, the program will not block and wait after passing
@@ -90,6 +93,25 @@ public class FluxAndMonoTest {
     StepVerifier.create(stringFlux)
         .expectNextCount(3)
         .expectErrorMessage("Exception Occurred")
+        .verify();
+  }
+
+
+  @Test
+  public void monoTest() {
+    Mono<String> stringMono = Mono.just("Spring");
+
+    // . You can call log() here instead of on Mono.just("Spring")
+    StepVerifier.create(stringMono.log())
+        .expectNext("Spring")
+        .verifyComplete();
+  }
+
+
+  @Test
+  public void monoTestError() {
+    StepVerifier.create(Mono.error(new RuntimeException("Exception occurred")).log())
+        .expectError(RuntimeException.class)
         .verify();
   }
 }
