@@ -106,5 +106,23 @@ public class FluxAndMonoControllerTest {
           assertEquals(expectedIntegerList, response.getResponseBody());
         });
   }
+
+
+  @Test
+  public void fluxStreamTest() {
+    Flux<Long> longStreamFlux = webTestClient.get().uri("/fluxstream")
+        .accept(MediaType.APPLICATION_STREAM_JSON)   // Not APPLICATION_JSON_UTF8 since the endpoint emits data indefinitely
+        .exchange()  //exchange() is what will actually make the call to the endpoint
+        .expectStatus().isOk()
+        .returnResult(Long.class)  // The returned result is a Flux, not some complete, finite set of values
+        .getResponseBody();
+
+    StepVerifier.create(longStreamFlux)
+            .expectNext(0l)
+            .expectNext(1l)
+            .expectNext(2l)
+            .thenCancel()   // This is to stop the subscription to the infinitely
+                            // emitting data producer (i.e., the /fluxstream endpoint)
+  }
 }
 */
