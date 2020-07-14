@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 
 @RestController
 public class FluxAndMonoController {
-
 
   @GetMapping("/flux")
   public Flux<Integer> returnFlux() {
@@ -19,7 +19,6 @@ public class FluxAndMonoController {
             .delayElements(Duration.ofSeconds(1))
             .log();
   }
-
 
   // MediaType.APPLICATION_STREAM_JSON_VALUE is for informing the client: "Hey,
   // ever I'm producing, it's a stream kind of value (as opposed to a regular JSON
@@ -31,5 +30,12 @@ public class FluxAndMonoController {
     // When a request from, say, a browser hits this endpoint,
     // then the browser becomes the subscriber to this Flux
     return Flux.interval(Duration.ofSeconds(1)).log();
+  }
+
+  @GetMapping("/mono")
+  public Mono<Integer> returnMono() {
+    // As the name suggests, you can only ever have
+    // one element associated with a Mono.
+    return Mono.just(1).log();
   }
 }

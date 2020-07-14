@@ -40,7 +40,7 @@ public class FluxAndMonoControllerTest {
     // Build an integerFlux that will make the call to the target endpoint:
     Flux<Integer> integerFlux = webTestClient.get().uri("/flux")
         .accept(MediaType.APPLICATION_JSON_UTF8)
-        .exchange()  //exchange() is what will actually make the call to the endpoint
+        .exchange()  // exchange() is what will actually make the call to the endpoint
         .expectStatus().isOk()
         .returnResult(Integer.class)
         .getResponseBody();
@@ -64,7 +64,7 @@ public class FluxAndMonoControllerTest {
     // from a single expression as opposed to how we split things up in fluxApproach1
     webTestClient.get().uri("/flux")
         .accept(MediaType.APPLICATION_JSON_UTF8)
-        .exchange()  //exchange() is what will actually make the call to the endpoint
+        .exchange()  // exchange() is what will actually make the call to the endpoint
         .expectStatus().isOk()
         .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
         .expectBodyList(Integer.class)
@@ -81,7 +81,7 @@ public class FluxAndMonoControllerTest {
 
     EntityExchangeResult<List<Integer>> entityExchangeResult = webTestClient.get().uri("/flux")
         .accept(MediaType.APPLICATION_JSON_UTF8)
-        .exchange()  //exchange() is what will actually make the call to the endpoint
+        .exchange()  // exchange() is what will actually make the call to the endpoint
         .expectStatus().isOk()
         .expectBodyList(Integer.class)
         .returnResult();
@@ -99,7 +99,7 @@ public class FluxAndMonoControllerTest {
 
     webTestClient.get().uri("/flux")
         .accept(MediaType.APPLICATION_JSON_UTF8)
-        .exchange()  //exchange() is what will actually make the call to the endpoint
+        .exchange()  // exchange() is what will actually make the call to the endpoint
         .expectStatus().isOk()
         .expectBodyList(Integer.class)
         .consumeWith((response) -> {
@@ -112,7 +112,7 @@ public class FluxAndMonoControllerTest {
   public void fluxStreamTest() {
     Flux<Long> longStreamFlux = webTestClient.get().uri("/fluxstream")
         .accept(MediaType.APPLICATION_STREAM_JSON)   // Not APPLICATION_JSON_UTF8 since the endpoint emits data indefinitely
-        .exchange()  //exchange() is what will actually make the call to the endpoint
+        .exchange()  // exchange() is what will actually make the call to the endpoint
         .expectStatus().isOk()
         .returnResult(Long.class)  // The returned result is a Flux, not some complete, finite set of values
         .getResponseBody();
@@ -123,6 +123,20 @@ public class FluxAndMonoControllerTest {
             .expectNext(2l)
             .thenCancel()   // This is to stop the subscription to the infinitely
                             // emitting data producer (i.e., the /fluxstream endpoint)
+  }
+
+
+  @Test
+  public void monoTest() {
+    Integer expectedValue = new Integer(1);
+    webTestClient.get().uri("/mono")
+               .accept(MediaType.APPLICATION_JSON_UTF8)
+               .exchange()  // exchange() is what will actually make the call to the endpoint
+               .expectStatus().isOk()
+               .expectBody(Integer.class)
+               .consumerWith((response) -> {
+                  assertEquals(expectedValue, response.getResponseBody());
+               });
   }
 }
 */
