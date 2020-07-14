@@ -18,12 +18,14 @@ import reactor.test.StepVerifier;
 
 // NOTE: THESE TESTS DON'T WORK -- probably due to some version incompatibility
 //       between what you set and what was set in the tutorial! Just use this file as reference
+// TODO: Get these tests to run?
 
 /*
 // Note that @WebFluxTest scans your project for classes
 // to test that have been annotated with @RestController.
-// The annotation will also cause a webTestClient to be
-// instantiated for the tests.
+// It will not scan classes that have been annotated with,
+// say, @Component or @Repository. The annotation will also
+// cause a webTestClient to be instantiated for the tests.
 @RunWith(SpringRunner.class)
 @WebFluxTest
 public class FluxAndMonoControllerTest {
@@ -134,7 +136,7 @@ public class FluxAndMonoControllerTest {
                .exchange()  // exchange() is what will actually make the call to the endpoint
                .expectStatus().isOk()
                .expectBody(Integer.class)
-               .consumerWith((response) -> {
+               .consumeWith((response) -> {
                   assertEquals(expectedValue, response.getResponseBody());
                });
   }

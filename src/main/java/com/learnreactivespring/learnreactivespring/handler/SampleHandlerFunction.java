@@ -9,7 +9,8 @@ import reactor.core.publisher.Mono;
 
 // . Using handler functions (alongside router functions) is a different
 //   implementation approach from using a class with the @RestController
-//   annotation...
+//   annotation. Using handler and router functions is called the "Functional
+//   Web" approach
 // . @Component will mark this class as a bean that will then be used in
 //   our router function class
 @Component
