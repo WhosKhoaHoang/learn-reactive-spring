@@ -27,11 +27,9 @@ public class FluxAndMonoController {
   // by the browser only as the data is available. NOTE: Results of this endpoint access
   // are bested viewed with Google Chrome.
   @GetMapping(value = "/fluxstream", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
-  public Flux<Integer> returnFluxStream() {
+  public Flux<Long> returnFluxStream() {
     // When a request from, say, a browser hits this endpoint,
     // then the browser becomes the subscriber to this Flux
-    return Flux.just(1,2,3,4)
-        .delayElements(Duration.ofSeconds(1))
-        .log();
+    return Flux.interval(Duration.ofSeconds(1)).log();
   }
 }
