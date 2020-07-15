@@ -13,12 +13,12 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 
 // This class will be responsible for mapping incoming requests to the
-// appropriate handler that we defined in hander.SampleHandlerFunction
+// appropriate handler that we defined in handler.SampleHandlerFunction
 @Configuration
 public class RouterFunctionConfig {
 
   @Bean
-  public RouterFunction<ServerResponse> rout(SampleHandlerFunction handlerFunction) {
+  public RouterFunction<ServerResponse> route(SampleHandlerFunction handlerFunction) {
     return RouterFunctions
             .route(GET("/functional/flux").and(accept(MediaType.APPLICATION_JSON)), handlerFunction::flux)
             .andRoute(GET("/functional/mono").and(accept(MediaType.APPLICATION_JSON)), handlerFunction::mono);
